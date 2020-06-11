@@ -1,10 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-export default function ProductsScreen({ navigation }) {
+export default function ContactUsScreen({ navigation }) {
   return (
     <View style={styles.main}>
-      <Text>This is ProductsScreen</Text>
+      <Text>This is ContactUsScreen</Text>
     </View>
   );
 }
