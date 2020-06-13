@@ -10,6 +10,7 @@ import HowToOrderScreen from "./HowToOrderScreen";
 import ShippingFeeScreen from "./ShippingFeeScreen";
 import ReceiptScreen from "./ReceiptsScreen";
 import ContactUsScreen from "./ContactUsScreen";
+import ProductDetail from "./ProductDetail";
 
 const ProductsStack = createStackNavigator();
 const CartsStack = createStackNavigator();
@@ -20,6 +21,7 @@ const HowToOrderStack = createStackNavigator();
 const ShippingFeeStack = createStackNavigator();
 const ReceiptStack = createStackNavigator();
 const ContactUsStack = createStackNavigator();
+const ProductDetailStack = createStackNavigator();
 
 export const ProductsStackScreen = ({ navigation }) => (
   <ProductsStack.Navigator
@@ -199,4 +201,24 @@ export const ContactUsStackScreen = ({ navigation }) => (
   >
     <ContactUsStack.Screen name="ContactUs" component={ContactUsScreen} />
   </ContactUsStack.Navigator>
+);
+
+export const ProductDetailStackScreen = (props) => (
+  <ProductDetailStack.Navigator
+    screenOptions={{
+      headerStyle: { backgroundColor: "blue" },
+      headerTintColor: "#fff",
+      headerTitleStyle: { fontWeight: "bold" },
+      headerLeft: () => (
+        <Icon.Button
+          name="ios-menu"
+          size={25}
+          backgroundColor="blue"
+          onPress={() => navigation.openDrawer()}
+        />
+      ),
+    }}
+  >
+    <ProductDetailStack.Screen name="ProductDetail" component={ProductDetail} />
+  </ProductDetailStack.Navigator>
 );

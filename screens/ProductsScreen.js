@@ -1,6 +1,8 @@
-import React from "react";
-import { ScrollView, View, Text, StyleSheet, Card, Image } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
+import React, { useLayoutEffect, useState } from "react";
+import { ScrollView, Button, Text, TextInput } from "react-native";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import ProductCard from "../components/ProductCard";
+import * as Animatable from "react-native-animatable";
 
 export default function ProductsScreen({ navigation }) {
   const productList = [
@@ -28,45 +30,55 @@ export default function ProductsScreen({ navigation }) {
     },
     {
       image: "https://media.monsoon.co.uk/medias/sys_master/9449009119262.jpg",
-      code: "1911",
-      name: "nco jaket jeans",
+      code: "1912",
+      name: "nco jaket jeans nco jaket jeans",
       price: 100000,
       stock: 15,
     },
   ];
+  const [count, setCount] = useState(0);
+  const [isSearchPressed, setIsSearchPressed] = useState(false);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Button
+          onPress={() => {
+            console.log("pressed");
+            setIsSearchPressed(!isSearchPressed);
+          }}
+          title="Search"
+        />
+      ),
+    });
+  }, [navigation, setCount]);
+
+  const [value, onChangeText] = useState("");
+
   return (
-    <ScrollView>
-      <FlatList
-        numColumns={2}
-        keyExtractor={(item, index) => index}
-        renderItem={productList.map((el) => (
-          <View style={styles.main}>
-            <Image
-              style={{
-                width: 200,
-                height: 200,
-                resizeMode: "contain",
-                borderRadius: 20,
-              }}
-              source={{
-                uri: productList[2].image,
-              }}
-            />
-            <Text>{productList[2].name}</Text>
-          </View>
+    <>
+      {isSearchPressed ? (
+        <Animatable.View animation="bounceIn">
+          <TextInput
+            style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
+            onChangeText={(text) => onChangeText(text)}
+            value={value}
+            placeholder="Input Search Code / Name here..."
+          />
+
+          <Button onPress={() => setIsSearchPressed(false)} title="Search" />
+        </Animatable.View>
+      ) : null}
+      <ScrollView>
+        {/* <Text>Count: {count}</Text> */}
+        {productList.map((product) => (
+          <ProductCard
+            key={product.code}
+            product={product}
+            navigation={navigation}
+          />
         ))}
-      ></FlatList>
-    </ScrollView>
+      </ScrollView>
+    </>
   );
 }
-
-const styles = StyleSheet.create({
-  main: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingTop: 20,
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
-});
