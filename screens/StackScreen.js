@@ -219,6 +219,6 @@ export const ProductDetailStackScreen = (props) => (
       ),
     }}
   >
-    {/* <ProductDetailStack.Screen name="ProductDetail" component={ProductDetail} /> */}
+    <ProductDetailStack.Screen name="ProductDetail" component={ProductDetail} />
   </ProductDetailStack.Navigator>
 );
