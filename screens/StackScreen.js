@@ -203,7 +203,7 @@ export const ContactUsStackScreen = ({ navigation }) => (
   </ContactUsStack.Navigator>
 );
 
-export const ProductDetailStackScreen = (props) => (
+export const ProductDetailStackScreen = ({ navigation }) => (
   <ProductDetailStack.Navigator
     screenOptions={{
       headerStyle: { backgroundColor: "blue" },
