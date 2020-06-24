@@ -2,7 +2,9 @@ import {
   SET_PRODUCTS,
   SET_PRODUCT_DETAIL,
   SET_CART,
+  SET_EDIT_CART,
   SET_PREVIOUS_SCREEN,
+  SET_INVOICE,
 } from "../actions";
 
 const initialState = {
@@ -10,6 +12,7 @@ const initialState = {
   product_detail: {},
   cart: [],
   previous_screen: "",
+  invoice: {},
 };
 
 function reducer(state = initialState, action) {
@@ -22,8 +25,12 @@ function reducer(state = initialState, action) {
       return { ...state, product_detail: payload };
     case SET_CART:
       return { ...state, cart: [...state.cart, payload] };
+    case SET_EDIT_CART:
+      return { ...state, cart: payload };
     case SET_PREVIOUS_SCREEN:
       return { ...state, previous_screen: payload };
+    case SET_INVOICE:
+      return { ...state, invoice: payload };
     default:
       break;
   }

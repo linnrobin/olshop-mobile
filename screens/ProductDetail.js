@@ -10,9 +10,8 @@ import {
 } from "react-native";
 import { Card, Modal, Input } from "@ui-kitten/components";
 
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
-import { setCart } from "../store/actions";
+import { useDispatch, useSelector } from "react-redux";
+import { setCart, editCart } from "../store/actions";
 
 import formatRupiah from "../helpers/formatRupiah";
 import Toast from "react-native-simple-toast";
@@ -23,53 +22,61 @@ const screenHeight = Math.round(Dimensions.get("window").height);
 export default function ProductDetail({ navigation }) {
   const product_detail = useSelector((state) => state.product_detail);
   const previous_screen = useSelector((state) => state.previous_screen);
+  const cart = useSelector((state) => state.cart);
 
   const { code, image, name, stock } = product_detail;
   const price = formatRupiah(product_detail.price, "Rp");
-  console.log(
-    product_detail.quantity === undefined ? "haha" : product_detail.quantity
+  const totalPrice = formatRupiah(
+    product_detail.quantity * product_detail.price,
+    "Rp"
   );
+
   const [visible, setVisible] = useState(false);
   const [visibleMessage, setVisibleMessage] = useState(false);
-  const [value, setValue] = useState(
-    product_detail.quantity === undefined
-      ? ""
-      : product_detail.quantity.toString()
-  );
+  const [value, setValue] = useState("");
   const [note, setNote] = useState("");
-
-  // if (previous_screen === "cartScreen") {
-  //   setValue(product_detail.quantity);
-  //   setNote(product_detail.note);
-  // }
 
   const dispatch = useDispatch();
 
   const handleAdd = () => {
     if (value <= stock && Number(value) >= 1) {
-      if (previous_screen === "productScreen") {
-        const newCartItem = {
-          code: product_detail.code,
-          image: product_detail.image,
-          name: product_detail.name,
-          stock: product_detail.stock,
-          price: product_detail.price,
-          quantity: Number(value),
-          note: note,
-        };
-        dispatch(setCart(newCartItem));
-        Toast.show("Successfully Added to cart");
-        setVisibleMessage(false);
-        setVisible(false);
-        setValue("");
-        setNote("");
-      } else {
-        console.log("edit this...");
-        setVisibleMessage(false);
-        setVisible(false);
-        setValue(product_detail.quantity.toString());
-        setNote(product_detail.note);
-      }
+      const newCartItem = {
+        code: product_detail.code,
+        image: product_detail.image,
+        name: product_detail.name,
+        stock: product_detail.stock,
+        price: product_detail.price,
+        quantity: Number(value),
+        note: note,
+      };
+      dispatch(setCart(newCartItem));
+      Toast.show("Successfully Added to cart");
+      setVisibleMessage(false);
+      setVisible(false);
+      setValue("");
+      setNote("");
+    } else {
+      setVisibleMessage(true);
+    }
+  };
+
+  const handleEdit = () => {
+    if (value <= stock && Number(value) >= 1) {
+      const editCartItem = {
+        code: product_detail.code,
+        image: product_detail.image,
+        name: product_detail.name,
+        stock: product_detail.stock,
+        price: product_detail.price,
+        quantity: Number(value),
+        note: note,
+      };
+      dispatch(editCart({ cart, editCartItem }));
+      Toast.show("Successfully Edited Cart");
+      setVisibleMessage(false);
+      setVisible(false);
+      setValue(product_detail.quantity.toString());
+      setNote(product_detail.note);
     } else {
       setVisibleMessage(true);
     }
@@ -83,7 +90,7 @@ export default function ProductDetail({ navigation }) {
             style={{ alignSelf: "flex-end" }}
             onPress={() => navigation.goBack()}
             title="Back"
-          ></Button>
+          />
           <Image
             style={styles.image}
             source={{
@@ -112,6 +119,11 @@ export default function ProductDetail({ navigation }) {
               </View>
 
               <View style={styles.row}>
+                <Text style={styles.badgeQuantity}>Total</Text>
+                <Text style={styles.quantity}>{totalPrice}</Text>
+              </View>
+
+              <View style={styles.row}>
                 <Text style={styles.badgeNote}>Note</Text>
                 <Text style={styles.note}>{product_detail.note}</Text>
               </View>
@@ -120,13 +132,21 @@ export default function ProductDetail({ navigation }) {
           {previous_screen === "productScreen" ? (
             <Button
               style={styles.cart}
-              onPress={() => setVisible(true)}
+              onPress={() => {
+                setVisible(true);
+                setValue("");
+                setNote("");
+              }}
               title="Add To Cart"
             ></Button>
           ) : (
             <Button
               style={styles.cart}
-              onPress={() => setVisible(true)}
+              onPress={() => {
+                setVisible(true);
+                setValue(product_detail.quantity.toString());
+                setNote(product_detail.note);
+              }}
               title="Edit"
             ></Button>
           )}
@@ -170,7 +190,11 @@ export default function ProductDetail({ navigation }) {
               setNote(nextNote);
             }}
           />
-          <Button onPress={handleAdd} title="Add" />
+          {previous_screen === "productScreen" ? (
+            <Button onPress={handleAdd} title="Add" />
+          ) : (
+            <Button onPress={handleEdit} title="Edit" />
+          )}
         </Card>
       </Modal>
     </ScrollView>
@@ -264,7 +288,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "red",
     paddingLeft: 60,
-    paddingRight: 60,
     marginBottom: 20,
   },
   badgePrice: {

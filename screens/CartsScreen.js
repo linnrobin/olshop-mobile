@@ -1,8 +1,9 @@
 import React from "react";
 import { View, ScrollView, Text, StyleSheet, Button } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ProductCard from "../components/ProductCard";
 import formatRupiah from "../helpers/formatRupiah";
+import { setInvoice } from "../store/actions";
 
 export default function CartsScreen({ navigation }) {
   const cart = useSelector((state) => state.cart);
@@ -13,9 +14,21 @@ export default function CartsScreen({ navigation }) {
     cartQuantity += cart[i].quantity;
     cartPrice += cart[i].price * cart[i].quantity;
   }
-  cartPrice = formatRupiah(cartPrice, "Rp");
+
+  const cartPriceFormatted = formatRupiah(cartPrice, "Rp");
+
+  const dispatch = useDispatch();
+
   const handleGenerateInvoice = () => {
     console.log("checking to db...");
+    const newInvoice = {
+      code: 1,
+      cart,
+      totalQuantity: cartQuantity,
+      totalPrice: cartPrice,
+      status: "Awaiting Payment",
+    };
+    dispatch(setInvoice(newInvoice));
   };
   return (
     <>
@@ -26,7 +39,7 @@ export default function CartsScreen({ navigation }) {
         </View>
         <View style={styles.price}>
           <Text style={styles.caption}>Total Price</Text>
-          <Text style={styles.text}>{cartPrice}</Text>
+          <Text style={styles.text}>{cartPriceFormatted}</Text>
         </View>
       </View>
       <Button onPress={handleGenerateInvoice} title="Generate Invoice Now" />
