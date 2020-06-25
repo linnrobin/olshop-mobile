@@ -49,7 +49,6 @@ export default function InvoicesScreen({ navigation }) {
 }
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 10,
     margin: 20,
     height: 300,
     width: screenWidth * 0.9,
